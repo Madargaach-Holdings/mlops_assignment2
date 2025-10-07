@@ -127,5 +127,28 @@ What the script does:
 - If port exposure is required, confirm Gradio share configuration or VM firewall settings.
 
 
+### Evidence
+
+- Live URL: `http://paffenroth-23.dyn.wpi.edu:8010/`
+- Service status excerpt:
+```text
+● hugging_face_mood_app.service - Hugging Face Mood App (Gradio)
+     Loaded: loaded (/home/student-admin/.config/systemd/user/hugging_face_mood_app.service; enabled)
+     Active: active (running)
+   Main PID: <pid> (python3)
+     CGroup: /user.slice/user-1002.slice/user@1002.service/app.slice/hugging_face_mood_app.service
+             └─... /home/student-admin/hugging_face_mood_app/venv/bin/python3 app.py
+```
+- Smoke test (local):
+```bash
+$ bash scripts/smoke_test.sh http://paffenroth-23.dyn.wpi.edu:8010/
+OK: http://paffenroth-23.dyn.wpi.edu:8010/ responded with HTTP 200
+```
+- Watchdog log sample:
+```text
+2025-10-07T16:03:36-0400 | Healthy: http://paffenroth-23.dyn.wpi.edu:8010/
+```
+
+
 
 
