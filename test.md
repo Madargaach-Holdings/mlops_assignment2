@@ -5,12 +5,12 @@ This tutorial walks you through everything required to complete CS2 on the provi
 Assumptions:
 - Local machine: Linux/macOS terminal with `ssh`, `ssh-keygen`, and `bash`.
 - VM login: `student-admin@paffenroth-23.dyn.wpi.edu` with port `22010` (replace if your assignment differs).
-- Your repository folder on local machine is at `/home/ujjwal/GitHub_Edits/mlops_assignment2` (adjust paths if different).
+- Your repository folder on local machine is at `/home/ujjwal/mlops_assignment2` (adjust paths if different).
 
 Important files (on your local machine):
-- `/home/ujjwal/GitHub_Edits/mlops_assignment2/student-admin_key` (provided bootstrap key to access the VM initially)
-- `/home/ujjwal/GitHub_Edits/mlops_assignment2/my_key` and `my_key.pub` (your personal keypair)
-- `/home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh` (automated deployment script)
+- `/home/ujjwal/mlops_assignment2/student-admin_key` (provided bootstrap key to access the VM initially)
+- `/home/ujjwal/mlops_assignment2/my_key` and `my_key.pub` (your personal keypair)
+- `/home/ujjwal/mlops_assignment2/deploy.sh` (automated deployment script)
 
 ---
 
@@ -18,18 +18,18 @@ Important files (on your local machine):
 
 1. Open a terminal and change to your repo folder:
 ```
-cd /home/ujjwal/GitHub_Edits/mlops_assignment2
+cd /home/ujjwal/mlops_assignment2
 ```
 
 2. Ensure keys have safe permissions (private keys should be owner-read only):
 ```
-chmod 400 /home/ujjwal/GitHub_Edits/mlops_assignment2/student-admin_key || true
-chmod 400 /home/ujjwal/GitHub_Edits/mlops_assignment2/my_key || true
+chmod 400 /home/ujjwal/mlops_assignment2/student-admin_key || true
+chmod 400 /home/ujjwal/mlops_assignment2/my_key || true
 ```
 
 3. If you do NOT already have a personal keypair, create one now (skip if already created):
 ```
-ssh-keygen -f /home/ujjwal/GitHub_Edits/mlops_assignment2/my_key -t ed25519
+ssh-keygen -f /home/ujjwal/mlops_assignment2/my_key -t ed25519
 ```
 
 ---
@@ -38,7 +38,7 @@ ssh-keygen -f /home/ujjwal/GitHub_Edits/mlops_assignment2/my_key -t ed25519
 
 1. Attempt to connect using the shared key:
 ```
-ssh -i /home/ujjwal/GitHub_Edits/mlops_assignment2/student-admin_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu
+ssh -i /home/ujjwal/mlops_assignment2/student-admin_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu
 ```
 
 2. If you are prompted to trust the host, type `yes`.
@@ -60,7 +60,7 @@ export HUGGING_FACE_TOKEN="hf_..."
 
 2. Run the deploy script (it will handle key transfer if required):
 ```
-bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
+bash /home/ujjwal/mlops_assignment2/deploy.sh
 ```
 
 3. If the VM was already secured with your personal key, the script will skip the transfer. Otherwise it will add your public key and remove the shared one, then proceed.
@@ -69,7 +69,7 @@ bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
 
 1. On your local machine, show your public key:
 ```
-cat /home/ujjwal/GitHub_Edits/mlops_assignment2/my_key.pub
+cat /home/ujjwal/mlops_assignment2/my_key.pub
 ```
 
 2. Copy the full line. On the VM (logged in using the shared key):
@@ -84,7 +84,7 @@ Paste your public key on a new line, save, and exit.
 
 4. Reconnect using your personal key (from local machine):
 ```
-ssh -i /home/ujjwal/GitHub_Edits/mlops_assignment2/my_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu
+ssh -i /home/ujjwal/mlops_assignment2/my_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu
 ```
 
 ---
@@ -243,7 +243,7 @@ systemctl --user restart hugging_face_mood_app.service
 If using `deploy.sh` again from local, set the new token first:
 ```
 export HUGGING_FACE_TOKEN="hf_new_token"
-bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
+bash /home/ujjwal/mlops_assignment2/deploy.sh
 ```
 
 ---
@@ -253,7 +253,7 @@ bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
 - Missing token when running the script from local:
 ```
 export HUGGING_FACE_TOKEN="hf_..."
-bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
+bash /home/ujjwal/mlops_assignment2/deploy.sh
 ```
 
 - Service fails to start (on VM):
@@ -299,7 +299,7 @@ Include screenshots of successful connection, service status, and the running UI
 On your local machine (recommended path):
 ```
 export HUGGING_FACE_TOKEN="hf_..."
-bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
+bash /home/ujjwal/mlops_assignment2/deploy.sh
 ```
 
 Then verify on the VM:

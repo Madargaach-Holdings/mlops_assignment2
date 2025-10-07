@@ -86,7 +86,7 @@ This repository includes `deploy.sh`, which:
 
 #### Run the deployment
 ```
-bash /home/ujjwal/GitHub_Edits/mlops_assignment2/deploy.sh
+bash /home/ujjwal/mlops_assignment2/deploy.sh
 ```
 
 What the script does:
