@@ -67,3 +67,87 @@ fi
 echo "--- Part 1 complete. You can proceed to the next step. ---"
 
 
+
+echo "--- Part 2: Environment setup and deployment ---"
+
+# Required: HF token must be exported locally before running
+if [ -z "${HUGGING_FACE_TOKEN}" ]; then
+    echo "ERROR: HUGGING_FACE_TOKEN is not set. Export it before running."
+    echo "Example: export HUGGING_FACE_TOKEN=hf_xxx"
+    exit 1
+fi
+
+REPO_URL="https://github.com/Madargaach-Holdings/hugging_face_mood_app.git"
+PROJECT_DIR="hugging_face_mood_app"
+
+# Stop any existing service (ignore errors)
+ssh -i "${KEY_TO_USE}" -p "${REMOTE_PORT}" "${REMOTE_USER}@${REMOTE_HOST}" \
+    "systemctl --user stop hugging_face_mood_app.service 2>/dev/null || true"
+
+# Install base deps, clone fresh, create venv, install requirements
+ssh -i "${KEY_TO_USE}" -p "${REMOTE_PORT}" "${REMOTE_USER}@${REMOTE_HOST}" \
+    "sudo apt update && sudo apt install -y git python3-venv && \
+     rm -rf ~/${PROJECT_DIR} && \
+     git clone ${REPO_URL} && \
+     cd ~/${PROJECT_DIR} && \
+     python3 -m venv venv && \
+     ./venv/bin/pip install --upgrade pip && \
+     ./venv/bin/pip install -r requirements.txt"
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to prepare Python environment on VM."
+    exit 1
+fi
+
+# Create env file with token
+ssh -i "${KEY_TO_USE}" -p "${REMOTE_PORT}" "${REMOTE_USER}@${REMOTE_HOST}" \
+    "mkdir -p ~/.config && umask 177 && \
+     echo 'HF_TOKEN=${HUGGING_FACE_TOKEN}' > ~/.config/hugging_face_mood_app.env && \
+     chmod 600 ~/.config/hugging_face_mood_app.env"
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to create env file on VM."
+    exit 1
+fi
+
+# Create/refresh systemd user service
+ssh -i "${KEY_TO_USE}" -p "${REMOTE_PORT}" "${REMOTE_USER}@${REMOTE_HOST}" \
+    "mkdir -p ~/.config/systemd/user && \
+     cat > ~/.config/systemd/user/hugging_face_mood_app.service << 'UNIT'
+[Unit]
+Description=Hugging Face Mood App (Gradio)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/hugging_face_mood_app
+EnvironmentFile=%h/.config/hugging_face_mood_app.env
+ExecStart=%h/hugging_face_mood_app/venv/bin/python3 app.py
+Restart=always
+RestartSec=5
+StandardOutput=append:%h/hugging_face_mood_app/app.log
+StandardError=append:%h/hugging_face_mood_app/app.log
+
+[Install]
+WantedBy=default.target
+UNIT"
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to install systemd service on VM."
+    exit 1
+fi
+
+# Ensure lingering enabled, then reload and start service
+ssh -i "${KEY_TO_USE}" -p "${REMOTE_PORT}" "${REMOTE_USER}@${REMOTE_HOST}" \
+    "sudo loginctl enable-linger ${REMOTE_USER} || true && \
+     systemctl --user daemon-reload && \
+     systemctl --user enable --now hugging_face_mood_app.service && \
+     systemctl --user status --no-pager --full hugging_face_mood_app.service | sed -n '1,50p'"
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to start the service."
+    exit 1
+fi
+
+echo "--- Part 2 complete. Service deployed and managed by systemd. ---"
