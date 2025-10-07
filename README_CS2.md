@@ -1,4 +1,43 @@
 ## DS/CS553 – MLOps Case Study 2 Deliverables
+### Operate and Recover
+
+- Status:
+```bash
+ssh -i ~/.ssh/my_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu \
+  'systemctl --user status --no-pager hugging_face_mood_app.service'
+```
+
+- Logs (live):
+```bash
+ssh -i ~/.ssh/my_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu \
+  'journalctl --user -u hugging_face_mood_app.service -f'
+```
+
+- Restart:
+```bash
+ssh -i ~/.ssh/my_key -p 22010 student-admin@paffenroth-23.dyn.wpi.edu \
+  'systemctl --user restart hugging_face_mood_app.service'
+```
+
+- Smoke test (local):
+```bash
+bash scripts/smoke_test.sh http://paffenroth-23.dyn.wpi.edu:8010/
+```
+
+- Guarded recovery (local):
+```bash
+HUGGING_FACE_TOKEN=<token> bash scripts/recover.sh
+```
+
+### Optional Cron Watchdog (conservative)
+
+Add with `crontab -e` on your laptop. Runs every 10 minutes, with lock and cooldown to avoid loops:
+```cron
+*/10 * * * * HUGGING_FACE_TOKEN=<token> /bin/bash -lc '/home/ujjwal/mlops_assignment2/scripts/recover.sh'
+```
+
+Live app URL: `http://paffenroth-23.dyn.wpi.edu:8010/`
+
 
 ### 1. Virtual Machine Setup
 
