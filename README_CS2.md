@@ -1,4 +1,10 @@
 ## DS/CS553 – MLOps Case Study 2 Deliverables
+
+**Team:** 10 (Solo)
+
+**Student:** Ujjwal Pandit
+
+**Date:** $(date)
 ### Operate and Recover
 
 - Status:
@@ -148,6 +154,33 @@ OK: http://paffenroth-23.dyn.wpi.edu:8010/ responded with HTTP 200
 ```text
 2025-10-07T16:03:36-0400 | Healthy: http://paffenroth-23.dyn.wpi.edu:8010/
 ```
+
+### Rubric Map (Where to Find Evidence)
+
+- SSH Access Setup (10 pts):
+  - Steps: Section "1. Virtual Machine Setup"
+  - Script: `deploy.sh` Part 1
+  - Evidence: SSH commands and status in README; screenshots recommended
+- Environment Configuration (10 pts):
+  - Steps: Section "1. Virtual Machine Setup" → Environment Configuration
+  - Script: `deploy.sh` Part 2
+  - Evidence: system packages installed, venv + requirements
+- Deployment of Products (2×15 pts):
+  - Repo: `Madargaach-Holdings/hugging_face_mood_app` (both local and API modes)
+  - Service: systemd unit in README; Evidence section and live URL
+- Automated Deployment and Auto-Recovery (20+ pts):
+  - Scripts: `deploy.sh`, `scripts/recover.sh`, `scripts/smoke_test.sh`
+  - Service config: systemd user service, lingering enabled
+  - Evidence: watchdog log sample, smoke test OK
+- Operations Runbook / Monitoring:
+  - Section "Operate and Recover" with status, logs, restart, cron
+
+### Limitations and Future Work
+
+- Parameterize VM host/port/user via env to support multiple teams with one script.
+- Add Slack/Telegram alerts in `recover.sh` on failure or redeploy.
+- Add GitHub Actions to lint shell scripts and verify smoke test on push.
+
 
 
 
